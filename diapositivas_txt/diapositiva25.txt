@@ -1,0 +1,1 @@
+El kernel expone info en /proc. $$ es el PID de tu terminal. Si abrimos un archivo como FD, lo vemos en /proc/$$/fd/N

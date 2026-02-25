@@ -1,0 +1,1 @@
+Vamos a trabajar en una carpeta segura para no tocar el sistema. Paso 1: créala. Paso 2: entra. Paso 3: comprueba con pwd.

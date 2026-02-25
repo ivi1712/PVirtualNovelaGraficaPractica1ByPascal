@@ -1,0 +1,1 @@
+pwd significa ‘print working directory’: imprime la ruta completa (absoluta) donde estás ahora

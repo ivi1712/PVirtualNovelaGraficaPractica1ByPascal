@@ -1,0 +1,1 @@
+kill PID envía una señal para terminar un proceso; lo normal es usar el PID del proceso que quieres parar.

@@ -1,0 +1,1 @@
+Comando: cd bootcamp_fs. cd significa ‘change directory’: cambias tu ubicación a esa carpeta.

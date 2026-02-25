@@ -1,0 +1,1 @@
+En /proc/tuPID/fd/ hay ‘enlaces’ a los ficheros abiertos; si miras fd/5 verás qué archivo es.

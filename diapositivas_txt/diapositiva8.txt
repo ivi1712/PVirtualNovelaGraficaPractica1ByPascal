@@ -1,0 +1,1 @@
+Comando: mkdir bootcamp_fs. mkdir crea una carpeta. bootcamp_fs es el nombre de la carpeta (sin espacios).

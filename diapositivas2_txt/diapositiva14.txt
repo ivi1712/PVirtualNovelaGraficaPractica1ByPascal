@@ -1,0 +1,1 @@
+rm borra el nombre del directorio; si un proceso tiene el archivo abierto, el contenido sigue accesible por su FD.

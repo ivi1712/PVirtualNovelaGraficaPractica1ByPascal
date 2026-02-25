@@ -1,0 +1,1 @@
+>> añade al final sin borrar lo anterior. echo "otra" >> nota.txt deja dos líneas.

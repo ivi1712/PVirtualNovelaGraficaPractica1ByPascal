@@ -1,0 +1,1 @@
+$! significa: ‘el PID del último proceso que lancé en segundo plano’; sirve para poder pararlo luego.

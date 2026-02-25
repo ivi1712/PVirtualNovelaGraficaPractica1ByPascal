@@ -1,0 +1,1 @@
+ls -l muestra una ‘ficha’: permisos, número de enlaces (links), dueño, tamaño y fecha. Esa columna de links la usaremos luego

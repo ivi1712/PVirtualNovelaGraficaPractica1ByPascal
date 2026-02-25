@@ -1,0 +1,1 @@
+ls lista lo que hay en la carpeta actual. No cambia nada, solo mira.

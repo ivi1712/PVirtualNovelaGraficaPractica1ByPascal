@@ -1,0 +1,1 @@
+-p significa ‘parents’: mkdir -p a/b/c crea también las carpetas padre que falten

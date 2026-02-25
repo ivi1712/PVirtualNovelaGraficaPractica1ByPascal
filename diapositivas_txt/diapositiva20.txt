@@ -1,0 +1,1 @@
+ln nota.txt c.txt crea un hard link: dos nombres diferentes, mismo inodo. El contador Links sube.

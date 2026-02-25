@@ -1,0 +1,1 @@
+Un proceso es un programa en ejecución; cada proceso tiene un número llamado PID (identificador del proceso).

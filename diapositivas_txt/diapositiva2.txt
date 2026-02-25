@@ -1,0 +1,1 @@
+Esto es la terminal: una ventana donde escribes comandos. El símbolo $ significa ‘usuario normal’. Escribe, pulsa ENTER, mira el resultado.

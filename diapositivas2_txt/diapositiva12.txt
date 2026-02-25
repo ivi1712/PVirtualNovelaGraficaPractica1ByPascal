@@ -1,0 +1,1 @@
+/proc/$$/fdinfo/5 muestra datos del FD; pos es el cursor: por dónde va la lectura dentro del archivo.

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novela Gráfica</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+            overflow: hidden;
+        }
+        
+        #pantalla-juego {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #imagen-fondo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        #caja-maestra {
+            position: absolute;
+            bottom: 5vh;
+            left: 5vw;
+            width: 90vw;
+            background: rgba(255, 255, 255, 0.95);
+            border: clamp(2px, 0.5vw, 6px) solid #222;
+            border-radius: 12px;
+            padding: 2vh 2vw;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 0 4px #d8d8d8, 4px 4px 0px rgba(0,0,0,0.7);
+            
+            display: flex;
+            flex-direction: row;
+            gap: 2vw;
+            
+            font-size: clamp(16px, 3.5vh, 40px);
+            line-height: 1.5em;
+        }
+
+        #zona-texto {
+            flex-grow: 1;
+            height: 4.5em; 
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        #zona-boton {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 2em; 
+        }
+
+        #indicador-a {
+            display: none;
+            width: 1.5em;
+            height: 1.5em;
+            background-color: #e63946;
+            color: white;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: sans-serif;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            animation: pulsar 1s infinite;
+        }
+
+        @keyframes pulsar {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(230, 57, 70, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+        }
+
+        #instrucciones {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: rgba(255,255,255,0.8);
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="instrucciones">A: Avanzar | S: Anterior</div>
+    
+    <div id="pantalla-juego">
+        <img id="imagen-fondo" src="" alt="Fondo">
+        <div id="caja-maestra">
+            <div id="zona-texto"></div>
+            <div id="zona-boton">
+                <div id="indicador-a">A</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        let diapositivas = [];
+        let indiceActual = 0;
+        
+        let textoPendiente = '';
+        let escribiendo = false;
+        let intervaloEscritura;
+        
+        // Nuevas variables para el historial de navegación
+        let pilaHistoria = [];
+        let textoInicioBloqueActual = '';
+
+        const imgFondo = document.getElementById('imagen-fondo');
+        const zonaTexto = document.getElementById('zona-texto');
+        const indicadorA = document.getElementById('indicador-a');
+
+        let audioCtx;
+
+        async function prepararDiapositivas() {
+            const totalDiapositivas = 26;
+            const promesas = [];
+
+            for (let i = 1; i <= totalDiapositivas; i++) {
+                promesas.push(
+                    fetch(`diapositivas_txt/diapositiva${i}.txt`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}`);
+                            }
+                            return response.text();
+                        })
+                        .then(texto => ({
+                            imagen: `diapositivas_png/diapositiva${i}.png`,
+                            texto
+                        }))
+                        .catch(error => {
+                            console.error(`Error al cargar el texto para la diapositiva ${i}:`, error);
+                            return {
+                                imagen: `diapositivas_png/diapositiva${i}.png`,
+                                texto: ''
+                            };
+                        })
+                );
+            }
+
+            diapositivas = await Promise.all(promesas);
+            indiceActual = 0;
+
+            if (diapositivas.length === 0) {
+                console.error('No se pudieron cargar diapositivas.');
+                return;
+            }
+
+            prepararDiapositiva();
+        }
+
+        
+
+        function inicializarAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+        
+        function reproducirPitido() {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(450, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0.015, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        function prepararDiapositiva() {
+            const diapositivaActual = diapositivas[indiceActual];
+            if (!diapositivaActual) {
+                console.error(`Diapositiva no disponible en índice ${indiceActual}`);
+                return;
+            }
+
+            imgFondo.src = diapositivaActual.imagen;
+            textoPendiente = diapositivaActual.texto || '';
+            iniciarEscrituraBloque();
+        }
+
+        function iniciarEscrituraBloque() {
+            // Guardamos el texto exacto con el que empieza este fragmento
+            textoInicioBloqueActual = textoPendiente; 
+            zonaTexto.innerHTML = '';
+            indicadorA.style.display = 'none';
+            escribiendo = true;
+            clearInterval(intervaloEscritura);
+            intervaloEscritura = setInterval(escribirCaracter, 35); 
+        }
+
+        function escribirCaracter() {
+            if (textoPendiente.length > 0) {
+                let char = textoPendiente.charAt(0);
+                zonaTexto.innerHTML += char;
+                textoPendiente = textoPendiente.substring(1);
+
+                if (zonaTexto.scrollHeight > zonaTexto.clientHeight) {
+                    let textoActual = zonaTexto.innerHTML;
+                    let ultimoEspacio = textoActual.lastIndexOf(' ');
+                    
+                    if (ultimoEspacio > 0) {
+                        let textoValido = textoActual.substring(0, ultimoEspacio);
+                        let textoSobrante = textoActual.substring(ultimoEspacio + 1);
+                        zonaTexto.innerHTML = textoValido;
+                        textoPendiente = textoSobrante + char + textoPendiente; 
+                    } else {
+                        zonaTexto.innerHTML = textoActual.substring(0, textoActual.length - 1);
+                        textoPendiente = char + textoPendiente;
+                    }
+
+                    detenerEscrituraYMostrarA();
+                } else {
+                    if (char !== ' ') reproducirPitido();
+                }
+            } else {
+                detenerEscrituraYMostrarA();
+            }
+        }
+
+        function detenerEscrituraYMostrarA() {
+            escribiendo = false;
+            clearInterval(intervaloEscritura);
+            indicadorA.style.display = 'flex'; 
+        }
+
+        function rellenarBloqueDeGolpe() {
+            while (textoPendiente.length > 0) {
+                let char = textoPendiente.charAt(0);
+                zonaTexto.innerHTML += char;
+                textoPendiente = textoPendiente.substring(1);
+
+                if (zonaTexto.scrollHeight > zonaTexto.clientHeight) {
+                    let textoActual = zonaTexto.innerHTML;
+                    let ultimoEspacio = textoActual.lastIndexOf(' ');
+                    if (ultimoEspacio > 0) {
+                        zonaTexto.innerHTML = textoActual.substring(0, ultimoEspacio);
+                        textoPendiente = textoActual.substring(ultimoEspacio + 1) + char + textoPendiente; 
+                    } else {
+                        zonaTexto.innerHTML = textoActual.substring(0, textoActual.length - 1);
+                        textoPendiente = char + textoPendiente;
+                    }
+                    break;
+                }
+            }
+            detenerEscrituraYMostrarA();
+        }
+
+        function accionAvanzar() {
+            inicializarAudio();
+            if (escribiendo) {
+                rellenarBloqueDeGolpe();
+            } else {
+                // Guardamos el estado actual en el historial antes de avanzar
+                pilaHistoria.push({
+                    indice: indiceActual,
+                    textoAIniciar: textoInicioBloqueActual
+                });
+
+                if (textoPendiente.length > 0) {
+                    // Queda texto en esta misma imagen
+                    iniciarEscrituraBloque();
+                } else {
+                    // Pasamos a la siguiente imagen
+                    if (indiceActual < diapositivas.length - 1) {
+                        indiceActual++;
+                        prepararDiapositiva();
+                    } else {
+                        // Si estamos en el final y no hay más, sacamos el último historial 
+                        // para que no se acumule infinitamente
+                        pilaHistoria.pop(); 
+                    }
+                }
+            }
+        }
+
+        function accionAnterior() {
+            inicializarAudio();
+            // Si hay algo en el historial, podemos retroceder
+            if (pilaHistoria.length > 0) {
+                let estadoAnterior = pilaHistoria.pop();
+                
+                // Restauramos los valores exactos de ese momento
+                indiceActual = estadoAnterior.indice;
+                textoPendiente = estadoAnterior.textoAIniciar;
+                
+                // Restauramos la imagen por si habíamos cambiado de diapositiva
+                imgFondo.src = diapositivas[indiceActual].imagen;
+                
+                // Volvemos a escribir el bloque
+                iniciarEscrituraBloque();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const tecla = e.key.toLowerCase();
+            if (tecla === 'a') accionAvanzar();
+            if (tecla === 's') accionAnterior();
+        });
+        
+        document.body.addEventListener('click', (e) => {
+            if (e.target.id !== 'instrucciones') accionAvanzar();
+        });
+
+
+        prepararDiapositivas();
+       // prepararDiapositiva();
+        
+    </script>
+</body>
+</html>

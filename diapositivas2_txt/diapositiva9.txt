@@ -1,0 +1,1 @@
+Un proceso no usa ‘nombres’ todo el rato: usa números llamados FD; 0=entrada, 1=salida, 2=errores.

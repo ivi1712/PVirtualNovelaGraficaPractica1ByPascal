@@ -1,0 +1,1 @@
+& lanza un proceso en segundo plano. PID es su número. kill PID lo detiene

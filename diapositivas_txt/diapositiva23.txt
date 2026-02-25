@@ -1,0 +1,1 @@
+| pasa la salida de un comando al siguiente. grep filtra líneas que contienen una palabra. Ej: ls -l | grep txt.

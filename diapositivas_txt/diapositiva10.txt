@@ -1,0 +1,1 @@
+.. significa ‘carpeta padre’ (un nivel arriba). cd .. te sube un nivel en el árbol.

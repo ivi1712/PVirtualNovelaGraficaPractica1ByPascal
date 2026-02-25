@@ -1,0 +1,1 @@
+rm borra el nombre (unlink). Si queda un hard link, el contenido sigue. El symlink se rompe porque apuntaba al nombre.

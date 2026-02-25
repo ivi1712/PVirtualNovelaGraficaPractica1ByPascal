@@ -1,0 +1,1 @@
+exec 5< archivo abre el archivo para lectura y lo guarda en el FD número 5; no imprime nada, solo ‘abre’.

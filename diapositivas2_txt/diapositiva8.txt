@@ -1,0 +1,1 @@
+/proc es una carpeta especial que enseña información del kernel; dentro hay carpetas con números que son PIDs.

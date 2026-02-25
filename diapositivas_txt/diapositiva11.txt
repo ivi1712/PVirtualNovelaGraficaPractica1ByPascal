@@ -1,0 +1,1 @@
+~ significa tu carpeta personal (home). cd ~ te lleva a tu home desde cualquier sitio.

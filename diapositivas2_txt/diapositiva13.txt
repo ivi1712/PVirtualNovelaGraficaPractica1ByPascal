@@ -1,0 +1,1 @@
+Si lees bytes desde un FD, el cursor avanza; vamos a leer 3 bytes y ver cómo cambia pos.

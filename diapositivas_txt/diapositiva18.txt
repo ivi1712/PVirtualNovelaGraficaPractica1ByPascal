@@ -1,0 +1,1 @@
+El nombre es una etiqueta. El inodo es la ‘identidad’ real. ls -i muestra el número de inodo.

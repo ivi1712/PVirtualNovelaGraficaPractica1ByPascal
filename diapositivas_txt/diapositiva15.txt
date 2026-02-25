@@ -1,0 +1,1 @@
+touch nota.txt crea el archivo si no existe (vacío) o actualiza sus tiempos si ya existe.

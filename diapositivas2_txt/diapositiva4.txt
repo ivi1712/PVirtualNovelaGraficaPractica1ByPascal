@@ -1,0 +1,1 @@
+El símbolo & al final hace que el programa se ejecute en segundo plano y te devuelva el control de la terminal.

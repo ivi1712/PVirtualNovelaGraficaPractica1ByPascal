@@ -1,0 +1,1 @@
+stat nota.txt muestra ficha completa: inodo, enlaces (Links), tamaño y tiempos (Access/Modify/Change).

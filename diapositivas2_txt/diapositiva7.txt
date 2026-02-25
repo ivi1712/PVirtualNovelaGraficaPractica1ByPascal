@@ -1,0 +1,1 @@
+$$ es el PID de tu terminal actual; es decir, identifica el proceso del shell en el que estás escribiendo

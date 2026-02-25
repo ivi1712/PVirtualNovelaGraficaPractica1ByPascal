@@ -1,0 +1,1 @@
+echo "hola" > nota.txt: echo imprime texto. > redirige a un archivo y lo sobrescribe (borra lo anterior).

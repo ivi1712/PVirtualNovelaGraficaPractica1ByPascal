@@ -1,0 +1,1 @@
+Aunque el archivo ya no tenga nombre, todavía puedes leer su contenido desde /proc/$$/fd/6 mientras siga abierto.

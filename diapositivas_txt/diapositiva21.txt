@@ -1,0 +1,1 @@
+ln -s nota.txt acceso.lnk crea un enlace simbólico: es un archivo que guarda una ruta. Tiene inodo distinto y se ve con ->.

@@ -1,0 +1,1 @@
+-a significa ‘all’: ls -a también muestra nombres que empiezan por punto . (ocultos).

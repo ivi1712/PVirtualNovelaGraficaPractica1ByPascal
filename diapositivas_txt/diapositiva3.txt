@@ -1,0 +1,1 @@
+Un comando suele ser: palabra principal + cosas separadas por espacios. Ejemplo: ls -l carpeta (ls=ver, -l=opción, carpeta=argumento).

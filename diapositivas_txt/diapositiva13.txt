@@ -1,0 +1,1 @@
+Si intentas crear una ruta profunda y faltan ‘padres’, falla. Ejemplo: mkdir a/b/c falla si no existen a y a/b

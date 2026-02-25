@@ -1,0 +1,88 @@
+# README - extraer_diapositivas.py
+
+Este script lee un HTML que tenga una constante JavaScript llamada `diapositivas` y extrae:
+
+- Una imagen PNG por diapositiva.
+- Un archivo TXT por diapositiva con el texto asociado.
+
+Los nombres de salida quedan así:
+
+- `diapositiva1.png`, `diapositiva2.png`, ...
+- `diapositiva1.txt`, `diapositiva2.txt`, ...
+
+---
+
+## Requisitos
+
+- Python 3.10+ (en tu caso ya funciona con Python 3.13).
+- Un HTML con una estructura tipo:
+
+```js
+const diapositivas = [
+  { imagen: "data:image/png;base64,...", texto: "..." },
+  ...
+];
+```
+
+---
+
+## Uso rápido (en esta carpeta)
+
+Desde `c:\Users\ivi17\Documents\pVirtual`:
+
+```powershell
+C:/Users/ivi17/AppData/Local/Microsoft/WindowsApps/python3.13.exe .\extraer_diapositivas.py --html .\ProfesorVirtual1-Parte1-Original.html --out .\diapositivas_png --out-textos .\diapositivas_txt
+```
+
+Al terminar verás algo como:
+
+- `Listo. Se guardaron 26 PNG ...`
+- `Listo. Se guardaron 26 TXT ...`
+
+---
+
+## Parámetros
+
+- `--html` (opcional): ruta al HTML de entrada.
+  - Si no lo pones, el script busca automáticamente un `.html` que contenga `const diapositivas`.
+- `--out` (opcional): carpeta de salida para PNG.
+  - Valor por defecto: `diapositivas_png`
+- `--out-textos` (opcional): carpeta de salida para TXT.
+  - Valor por defecto: `diapositivas_txt`
+
+---
+
+## Ejemplos
+
+### 1) Usar autodetección de HTML
+
+```python .\extraer_diapositivas.py
+```
+
+### 2) Elegir carpetas de salida personalizadas
+
+```python .\extraer_diapositivas.py --html .\ProfesorVirtual1-Parte1-Original.html --out .\assets\img --out-textos .\assets\txt
+```
+
+---
+
+## Errores comunes
+
+- **"No se encontró la constante 'diapositivas'"**
+  - El HTML no tiene `const diapositivas = [...]` o está con otro nombre.
+
+- **"Formato no soportado ... Solo se admite PNG"**
+  - Alguna diapositiva trae imagen en otro formato (por ejemplo JPG).
+
+- **Advertencias `[WARN] Saltando diapositiva N`**
+  - Esa diapositiva no se pudo decodificar; el script sigue con las demás.
+
+---
+
+## Resultado esperado en este proyecto
+
+Después de ejecutar correctamente:
+
+- Carpeta `diapositivas_png` con `diapositiva1.png ... diapositiva26.png`
+- Carpeta `diapositivas_txt` con `diapositiva1.txt ... diapositiva26.txt`
+
